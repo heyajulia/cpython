@@ -1358,6 +1358,65 @@ class GrammarTests(unittest.TestCase):
             x = 2
         self.assertEqual(x, 2)
 
+    def test_until(self):
+        # 'until' test ':' suite ['else' ':' suite]
+        until 1: pass
+        until 1: pass
+        else: pass
+
+        # Test that "until 1" (condition immediately true) doesn't execute body
+        x = 0
+        until 1:
+            x = 1
+        else:
+            x = 2
+        self.assertEqual(x, 2)
+
+        # Test until loop that executes multiple times
+        x = 0
+        until x >= 3:
+            x += 1
+        self.assertEqual(x, 3)
+
+        # Test until with break
+        x = 0
+        until 0:
+            x += 1
+            if x >= 5:
+                break
+        self.assertEqual(x, 5)
+
+        # Test until with continue
+        x = 0
+        y = 0
+        until x >= 5:
+            x += 1
+            if x % 2 == 0:
+                continue
+            y += 1
+        self.assertEqual(y, 3)  # 1, 3, 5 are odd
+
+        # Test until with else (else executes when condition becomes true)
+        x = 0
+        z = 0
+        until x >= 3:
+            x += 1
+        else:
+            z = 10
+        self.assertEqual(z, 10)
+
+        # Test until with break (else doesn't execute)
+        x = 0
+        z = 0
+        until x >= 10:
+            x += 1
+            if x >= 3:
+                break
+        else:
+            z = 10
+        self.assertEqual(x, 3)
+        self.assertEqual(z, 0)
+
     def test_for(self):
         # 'for' exprlist 'in' exprlist ':' suite ['else' ':' suite]
         for i in 1, 2, 3: pass

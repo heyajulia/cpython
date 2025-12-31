@@ -517,6 +517,16 @@ class Unparser(NodeVisitor):
             with self.block():
                 self.traverse(node.orelse)
 
+    def visit_Until(self, node):
+        self.fill("until ", allow_semicolon=False)
+        self.traverse(node.test)
+        with self.block():
+            self.traverse(node.body)
+        if node.orelse:
+            self.fill("else", allow_semicolon=False)
+            with self.block():
+                self.traverse(node.orelse)
+
     def visit_With(self, node):
         self.fill("with ", allow_semicolon=False)
         self.interleave(lambda: self.write(", "), self.traverse, node.items)
